@@ -5,8 +5,8 @@ type Character = {
   image: string;
   name: string;
   status: string;
-  race: string;
-  firstSeenEpisode: string;
+  species: string;
+  location: string;
 };
 
 type CharacterCardProps = {
@@ -21,8 +21,8 @@ const CharacterCard: React.FC<CharacterCardProps> = ({character}) => {
       <Image style={styles.image} source={{uri: character.image}} />
       <Text style={styles.title}>{character.name}</Text>
       <Text>Status: {character.status}</Text>
-      <Text>Race: {character.race}</Text>
-      <Text>First Seen: {character.firstSeenEpisode}</Text>
+      <Text>species: {character.species}</Text>
+      <Text>First Seen: {character.location}</Text>
     </View>
   );
 };
