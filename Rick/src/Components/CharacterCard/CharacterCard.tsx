@@ -14,15 +14,13 @@ type CharacterCardProps = {
 };
 
 const CharacterCard: React.FC<CharacterCardProps> = ({character}) => {
-  console.log(character);
-
   return (
     <View style={styles.card}>
       <Image style={styles.image} source={{uri: character.image}} />
       <Text style={styles.title}>{character.name}</Text>
       <Text>Status: {character.status}</Text>
       <Text>species: {character.species}</Text>
-      <Text>First Seen: {character.location}</Text>
+      <Text>Location: {character.location}</Text>
     </View>
   );
 };
