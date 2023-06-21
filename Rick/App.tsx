@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, useColorScheme} from 'react-native';
+import {SafeAreaView} from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import CharacterList from './src/Components/CharacterList/CharacterList';
-import {getData} from './src/api/getData';
 import {HeaderFilter} from './src/Components/HeaderFilter/HeaderFilter';
 import ModalInput from './src/Components/ModalInput/ModalInput';
 import {Character} from './src/types/Character';
@@ -19,21 +17,17 @@ const characterMocked = {
 };
 
 function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const initialFilters = {
+    species: '',
+    status: '',
+    name: '',
+  };
   const [characters, setCharacters] = useState<Character[]>();
   const [apiGetCharacter, setApiGetCharacter] = useState(
     'https://rickandmortyapi.com/api/character',
   );
-  const [filters, setFilters] = useState({
-    species: '',
-    status: '',
-    name: '',
-  });
+  const [filters, setFilters] = useState(initialFilters);
   const [modalFilter, setModalFilter] = useState<null | string>(null);
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   const getCharacters = (newUrl?: string) => {
     fetchCharacters({
@@ -44,42 +38,39 @@ function App(): JSX.Element {
     });
   };
 
+  const filterCharacters = (value: string) => {
+    if (modalFilter) {
+      setFilters({
+        ...initialFilters,
+        [modalFilter]: value,
+      });
+      getCharacters(
+        'https://rickandmortyapi.com/api/character/?' +
+          [modalFilter] +
+          '=' +
+          value,
+      );
+      setModalFilter(null);
+    }
+  };
+
   useEffect(() => {
     getCharacters();
   }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView>
       <ModalInput
         isVisible={modalFilter !== null}
-        onSubmit={async (value: string) => {
-          if (modalFilter) {
-            setFilters({
-              species: '',
-              status: '',
-              name: '',
-              [modalFilter]: value,
-            });
-            getCharacters(
-              'https://rickandmortyapi.com/api/character/?' +
-                [modalFilter] +
-                '=' +
-                value,
-            );
-            setModalFilter(null);
-          }
-        }}
+        onSubmit={filterCharacters}
         onClose={() => setModalFilter(null)}
       />
-
-      {filters ? (
-        <HeaderFilter
-          filterSpecies={() => setModalFilter('species')}
-          filterStatus={() => setModalFilter('status')}
-          filterName={() => setModalFilter('name')}
-          filterValue={filters}
-        />
-      ) : null}
+      <HeaderFilter
+        filterSpecies={() => setModalFilter('species')}
+        filterStatus={() => setModalFilter('status')}
+        filterName={() => setModalFilter('name')}
+        filterValue={filters}
+      />
       {characters ? (
         <CharacterList
           characters={characters || [characterMocked]}
