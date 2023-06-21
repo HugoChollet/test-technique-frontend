@@ -26,7 +26,7 @@ function App(): JSX.Element {
   );
   const [filters, setFilters] = useState({
     species: '',
-    alive: false,
+    status: '',
     name: '',
   });
   const [modalFilter, setModalFilter] = useState<null | string>(null);
@@ -36,15 +36,12 @@ function App(): JSX.Element {
   };
 
   const getCharacters = (newUrl?: string) => {
-    console.log('fetching ', newUrl || apiGetCharacter);
-
     fetchCharacters({
       url: newUrl || apiGetCharacter,
       characters: newUrl ? [] : characters,
       setUrl: setApiGetCharacter,
       setCharacters: setCharacters,
     });
-    console.log(characters);
   };
 
   useEffect(() => {
@@ -75,11 +72,7 @@ function App(): JSX.Element {
       {filters ? (
         <HeaderFilter
           filterSpecies={() => setModalFilter('species')}
-          filterAlive={() =>
-            setFilters(oldFilters => {
-              return {...oldFilters, alive: !oldFilters.alive};
-            })
-          }
+          filterStatus={() => setModalFilter('status')}
           filterName={() => setModalFilter('name')}
           filterValue={filters}
         />

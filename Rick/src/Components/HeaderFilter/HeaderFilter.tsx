@@ -4,19 +4,19 @@ import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 type Filter = {
   species: string;
   name: string;
-  alive: boolean;
+  status: string;
 };
 
 type HeaderProps = {
   filterSpecies: () => void;
-  filterAlive: () => void;
+  filterStatus: () => void;
   filterName: () => void;
   filterValue: Filter;
 };
 
 export const HeaderFilter: React.FC<HeaderProps> = ({
   filterSpecies,
-  filterAlive,
+  filterStatus,
   filterName,
   filterValue,
 }) => {
@@ -28,10 +28,8 @@ export const HeaderFilter: React.FC<HeaderProps> = ({
       <TouchableOpacity onPress={filterSpecies}>
         <Text style={filterStyle(filterValue.species)}>Species</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={filterAlive}>
-        <Text style={filterValue.alive ? styles.activeFilter : styles.filter}>
-          Alive
-        </Text>
+      <TouchableOpacity onPress={filterStatus}>
+        <Text style={filterStyle(filterValue.status)}>Status</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={filterName}>
         <Text style={filterStyle(filterValue.name)}>Name</Text>
