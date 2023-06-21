@@ -1,20 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, Text} from 'react-native';
 
 import CharacterList from './src/Components/CharacterList/CharacterList';
 import {HeaderFilter} from './src/Components/HeaderFilter/HeaderFilter';
 import ModalInput from './src/Components/ModalInput/ModalInput';
 import {Character} from './src/types/Character';
 import {fetchCharacters} from './src/api/fetchCharacters';
-
-const characterMocked = {
-  image:
-    'https://www.radiofrance.fr/s3/cruiser-production/2019/10/22f8d83b-2dbb-4156-8f6d-9cc13b94e16f/1200x680_rickmorty.jpg',
-  name: 'Rick&Morty',
-  status: 'Okay',
-  species: 'Cartoons Characters',
-  location: 'TV',
-};
+import ErrorScreen from './src/Components/ErrorScreen/ErrorScreen';
 
 function App(): JSX.Element {
   const initialFilters = {
@@ -29,13 +21,17 @@ function App(): JSX.Element {
   const [filters, setFilters] = useState(initialFilters);
   const [modalFilter, setModalFilter] = useState<null | string>(null);
 
-  const getCharacters = (newUrl?: string) => {
-    fetchCharacters({
-      url: newUrl || apiGetCharacter,
-      characters: newUrl ? [] : characters,
-      setUrl: setApiGetCharacter,
-      setCharacters: setCharacters,
-    });
+  const getCharacters = async (newUrl?: string) => {
+    try {
+      await fetchCharacters({
+        url: newUrl || apiGetCharacter,
+        characters: newUrl ? [] : characters,
+        setUrl: setApiGetCharacter,
+        setCharacters: setCharacters,
+      });
+    } catch (e) {
+      setCharacters([]);
+    }
   };
 
   const filterCharacters = (value: string) => {
@@ -71,12 +67,14 @@ function App(): JSX.Element {
         filterName={() => setModalFilter('name')}
         filterValue={filters}
       />
-      {characters ? (
+      {characters && characters.length > 0 ? (
         <CharacterList
-          characters={characters || [characterMocked]}
+          characters={characters}
           onEndReached={() => getCharacters()}
         />
-      ) : null}
+      ) : (
+        <ErrorScreen />
+      )}
     </SafeAreaView>
   );
 }
