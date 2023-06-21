@@ -54,8 +54,11 @@ function App(): JSX.Element {
         isVisible={modalFilter !== null}
         onSubmit={async (value: string) => {
           if (modalFilter) {
-            setFilters(oldFilters => {
-              return {...oldFilters, [modalFilter]: value};
+            setFilters({
+              species: '',
+              status: '',
+              name: '',
+              [modalFilter]: value,
             });
             getCharacters(
               'https://rickandmortyapi.com/api/character/?' +
