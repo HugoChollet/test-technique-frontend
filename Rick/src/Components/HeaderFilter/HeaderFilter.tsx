@@ -3,21 +3,21 @@ import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 
 type Filter = {
   species: string;
-  location: string;
+  name: string;
   alive: boolean;
 };
 
 type HeaderProps = {
   filterSpecies: () => void;
   filterAlive: () => void;
-  filterLocation: () => void;
+  filterName: () => void;
   filterValue: Filter;
 };
 
 export const HeaderFilter: React.FC<HeaderProps> = ({
   filterSpecies,
   filterAlive,
-  filterLocation,
+  filterName,
   filterValue,
 }) => {
   const filterStyle = (filter: string) =>
@@ -33,8 +33,8 @@ export const HeaderFilter: React.FC<HeaderProps> = ({
           Alive
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={filterLocation}>
-        <Text style={filterStyle(filterValue.location)}>Location</Text>
+      <TouchableOpacity onPress={filterName}>
+        <Text style={filterStyle(filterValue.name)}>Name</Text>
       </TouchableOpacity>
     </View>
   );
