@@ -3,11 +3,11 @@ import {Modal, View, TextInput, Button, StyleSheet} from 'react-native';
 
 type ModalInputProps = {
   isVisible: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   onSubmit: (value: string) => void;
 };
 
-export const ModalInput: React.FC<ModalInputProps> = ({
+const ModalInput: React.FC<ModalInputProps> = ({
   isVisible,
   onClose,
   onSubmit,
@@ -67,3 +67,5 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+export default ModalInput;

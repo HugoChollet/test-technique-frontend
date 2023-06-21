@@ -3,10 +3,11 @@ import {SafeAreaView, useColorScheme} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import CharacterList from './src/Components/CharacterList/CharacterList';
-import {getData} from './src/Components/getData';
+import {getData} from './src/api/getData';
 import {HeaderFilter} from './src/Components/HeaderFilter/HeaderFilter';
-import {ModalInput} from './src/Components/ModalInput/ModalInput';
+import ModalInput from './src/Components/ModalInput/ModalInput';
 import {Character} from './src/types/Character';
+import {fetchCharacters} from './src/api/fetchCharacters';
 
 const characterMocked = {
   image:
@@ -17,7 +18,7 @@ const characterMocked = {
   location: 'TV',
 };
 
-export const App = (): JSX.Element => {
+function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [characters, setCharacters] = useState<Character[]>();
   const [apiGetCharacter, setApiGetCharacter] = useState(
@@ -26,7 +27,7 @@ export const App = (): JSX.Element => {
   const [filters, setFilters] = useState({
     species: '',
     alive: false,
-    location: '',
+    name: '',
   });
   const [modalFilter, setModalFilter] = useState<null | string>(null);
 
@@ -34,46 +35,37 @@ export const App = (): JSX.Element => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const fetchCharacters = () => {
-    getData(apiGetCharacter).then(data => {
-      setApiGetCharacter(data.info.next);
-      setCharacters([
-        ...(characters || []),
-        ...data.results.map(
-          (char: {
-            name: string;
-            image: string;
-            status: string;
-            species: string;
-            location: {name: string};
-          }) => {
-            return {
-              name: char.name,
-              image: char.image,
-              status: char.status,
-              species: char.species,
-              location: char.location.name,
-            };
-          },
-        ),
-      ]);
+  const getCharacters = (newUrl?: string) => {
+    console.log('fetching ', newUrl || apiGetCharacter);
+
+    fetchCharacters({
+      url: newUrl || apiGetCharacter,
+      characters: newUrl ? [] : characters,
+      setUrl: setApiGetCharacter,
+      setCharacters: setCharacters,
     });
+    console.log(characters);
   };
 
   useEffect(() => {
-    fetchCharacters();
+    getCharacters();
   }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>
       <ModalInput
         isVisible={modalFilter !== null}
-        onSubmit={(value: string) => {
+        onSubmit={async (value: string) => {
           if (modalFilter) {
             setFilters(oldFilters => {
               return {...oldFilters, [modalFilter]: value};
             });
-            console.log('submit');
+            getCharacters(
+              'https://rickandmortyapi.com/api/character/?' +
+                [modalFilter] +
+                '=' +
+                value,
+            );
             setModalFilter(null);
           }
         }}
@@ -88,16 +80,18 @@ export const App = (): JSX.Element => {
               return {...oldFilters, alive: !oldFilters.alive};
             })
           }
-          filterLocation={() => setModalFilter('location')}
+          filterName={() => setModalFilter('name')}
           filterValue={filters}
         />
       ) : null}
       {characters ? (
         <CharacterList
           characters={characters || [characterMocked]}
-          onEndReached={() => fetchCharacters()}
+          onEndReached={() => getCharacters()}
         />
       ) : null}
     </SafeAreaView>
   );
-};
+}
+
+export default App;
